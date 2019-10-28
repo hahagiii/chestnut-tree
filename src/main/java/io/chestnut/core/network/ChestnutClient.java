@@ -1,6 +1,5 @@
 package io.chestnut.core.network;
 
-import io.chestnut.core.SocketConnection;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,11 +17,16 @@ public class ChestnutClient {
 		clientEventLoopGroup = new NioEventLoopGroup(clientServiceThreadNum);
 	}
 
-	public void connect(String ip,int port,SocketConnection socketConnection) throws InterruptedException, InstantiationException, IllegalAccessException {
+	public void connect(String ip,int port,SocketConnection protocolCodec) throws Exception {
+		Object [] par = null;
+		 connect(ip, port, protocolCodec,par);
+	}
+	
+	public void connect(String ip,int port,SocketConnection protocolCodec,Object ...par) throws Exception {
 		clientBootstrap = new Bootstrap()
 				.group(clientEventLoopGroup)
 				.channel(NioSocketChannel.class)
-				.handler(NetworkCommon.newChannelInitializer(socketConnection));
+				.handler(NetworkCommon.newClientChannelInitializer(protocolCodec,par));
 		
 		clientBootstrap.connect(ip, port).sync();
 	}

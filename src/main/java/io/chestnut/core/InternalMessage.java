@@ -49,10 +49,6 @@ public abstract class InternalMessage implements  Message{
     }
 
     
-	public short getMessageId() {
-		return messageId;
-	}
-
 	public void setMessageId(short messageId) {
 		this.messageId = messageId;
 	};

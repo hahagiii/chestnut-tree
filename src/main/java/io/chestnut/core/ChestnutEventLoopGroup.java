@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.chestnut.core.systemMessage.SystemMsgTimerSecond;
+import io.chestnut.core.message.systemMsg.SystemMsgTimerSecond;
 
 public class ChestnutEventLoopGroup {
 	private Timer timerEventTimer;
@@ -55,6 +55,19 @@ public class ChestnutEventLoopGroup {
 
 	public void addTimerEvent(TimerTask timerTask, long delay, long period) {
 		timerEventTimer.scheduleAtFixedRate(timerTask, delay, period);
+	}
+
+	public void addTimerEvent(int period, TimeHandler object) {
+		TimerTask timerTask = new TimerTask() {
+			
+			@Override
+			public void run() {
+				object.run();
+				
+			}
+		};
+		timerEventTimer.scheduleAtFixedRate(timerTask, 1000, period);
+		
 	}
 
 }

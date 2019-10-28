@@ -21,7 +21,7 @@ public class MessageFactory<T extends Message> {
 	}
 	
 	public MessageFactory(String path) {
-		add(path);
+		addPath(path);
 		
 	}
 
@@ -29,7 +29,7 @@ public class MessageFactory<T extends Message> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void add(String path) {
+	public void addPath(String path) {
 		Set<Class<?>> classSet = ClassScanner.getClasses(path);
 		for (Class<?> clazz : classSet) {
 			MsgAnnotate protocol = clazz.getAnnotation(MsgAnnotate.class);

@@ -1,17 +1,14 @@
 package io.chestnut.core;
 
 public class InternalMsgFactory {
-	public static MessageFactory<InternalMessage> messageFactory = new MessageFactory<>();
+	public MessageFactory<InternalMessage> messageFactory = new MessageFactory<>();
 	
-	public static void init(String path) {
-		messageFactory.add(path);
-	}
 	
 	@SuppressWarnings("unchecked")
-	public static  <T extends InternalMessage>  T getMessage(short id) throws Exception {
+	public  <T extends InternalMessage>  T getMessage(short id)  {
 		InternalMessage internalMessage = messageFactory.get(id);
 		if(internalMessage == null) {
-			throw new Exception(id + " 未能初始化");
+			return null;
 		}
 		internalMessage.setMessageId(id);
 		return (T) internalMessage;

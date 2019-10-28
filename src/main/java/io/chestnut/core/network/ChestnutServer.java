@@ -1,6 +1,5 @@
 package io.chestnut.core.network;
 
-import io.chestnut.core.SocketConnection;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -19,18 +18,18 @@ public class ChestnutServer {
 		nettyAcceptThreadGroup = new NioEventLoopGroup(1);
 		nettyWorkerThreadGroup = new NioEventLoopGroup(protocolServiceThreadNum);
 	}
-	public void listen(int port,SocketConnection protocolCodec) throws Exception {
+	
+	public void listen(int port,Class<? extends SocketConnection> protocolCodecClass) throws Exception {
+		Object [] parameter = null;
+		listen(port, protocolCodecClass, parameter);
+	}
+	public void listen(int port,Class<? extends SocketConnection> protocolCodecClass,Object ...parameter) throws Exception {
 		serverBootstrap = new ServerBootstrap()
 				.group(nettyAcceptThreadGroup, nettyWorkerThreadGroup)
 				.channel(NioServerSocketChannel.class)
 				.option(ChannelOption.SO_BACKLOG, 100)
-				.childHandler(NetworkCommon.newChannelInitializer(protocolCodec));
+				.childHandler(NetworkCommon.newChannelInitializer(protocolCodecClass,parameter));
 		serverBootstrap.bind(port).sync();
-	}
-	
-	public void listen(int port,Class<? extends SocketConnection> protocolCodecClass) throws Exception {
-		final SocketConnection protocolCodec = protocolCodecClass.newInstance();
-		listen(port, protocolCodec);
 	}
 	
 }

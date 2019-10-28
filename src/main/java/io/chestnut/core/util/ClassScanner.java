@@ -22,7 +22,8 @@ import io.chestnut.core.network.httpd.WebServlet;
 import org.slf4j.Logger;
 
 public class ClassScanner {
-	
+	public static final Logger logger = LoggerFactory.getLogger(ClassScanner.class.getName());
+
 	public static void main(String args[]) throws Exception {
 		Set<Class<?>> classSet = ClassScanner.getClasses("io.chestnut.core.service.serviceMrg.httpHandle");
 		for (Class<?> class1 : classSet) {
@@ -58,15 +59,14 @@ public class ClassScanner {
 		return  httpServletMap;
 	}
 	
-	public static final Logger logger = LoggerFactory.getLogger(ClassScanner.class.getName());
 
 	/**
 	 * 
-	 * @param pack
-	 * @return
+	 * @param pack 路径名字
+	 * @return 返回值
 	 */
 	public static Set<Class<?>> getClasses(String pack) {
-
+		logger.debug("start getClasses " + pack);
 		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
 		boolean recursive = true;
 		String packageName = pack;
@@ -81,7 +81,7 @@ public class ClassScanner {
 					String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
 					findAndAddClassesInPackageByFile(packageName, filePath, recursive, classes);
 				} else if ("jar".equals(protocol)) {
-					logger.error("jar锟斤拷锟酵碉拷扫锟斤拷");
+					logger.debug("从jar中开始加载文件");
 					JarFile jar;
 					try {
 						jar = ((JarURLConnection) url.openConnection()).getJarFile();
@@ -121,14 +121,6 @@ public class ClassScanner {
 		return classes;
 	}
 
-	/**
-	
-	 * 
-	 * @param packageName
-	 * @param packagePath
-	 * @param recursive
-	 * @param classes
-	 */
 	public static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive,
 			Set<Class<?>> classes) {
 		File dir = new File(packagePath);

@@ -1,4 +1,4 @@
-package io.chestnut.core.systemMessage;
+package io.chestnut.core.message.systemMsg;
 
 public class SystemMessageDefine {
 	public final static short SystemMsgTimerCustomize = 1;

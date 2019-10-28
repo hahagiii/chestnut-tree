@@ -8,9 +8,18 @@ public class SimpleProtocolInFactory extends MessageFactory<ProtocolIn> implemen
 	public SimpleProtocolInFactory(short[] messageIdList, Class<? extends ProtocolIn>[] classList) {
 		super(messageIdList, classList);
 	}
+	
+	public SimpleProtocolInFactory() {
+	}
+	
 
 	public SimpleProtocolInFactory(String path) {
 		super(path);
+	}
+	
+	@Override
+	public ProtocolIn getProtocolIn(short protocolId) {
+		return get(protocolId);
 	}
 	
 	@Override

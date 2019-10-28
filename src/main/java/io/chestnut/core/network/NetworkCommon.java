@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.chestnut.core.InternalMessage;
-import io.chestnut.core.SocketConnection;
 import io.chestnut.core.protocol.ProtocolOut;
 import io.chestnut.core.util.DebugUtil;
 import io.netty.buffer.ByteBuf;
@@ -21,8 +20,7 @@ import io.netty.handler.codec.EncoderException;
 
 public class NetworkCommon {
 	private static final Logger logger = LoggerFactory.getLogger(NetworkCommon.class);
-
-	final static public ChannelInitializer<?> newChannelInitializer(final SocketConnection protocolCodec) {
+	final static public ChannelInitializer<?> newClientChannelInitializer(final SocketConnection protocolCodec,Object []parameter) {
 		return new ChannelInitializer<SocketChannel>() {
 			@Override
 			public void initChannel(SocketChannel ch) throws Exception {
@@ -40,7 +38,7 @@ public class NetworkCommon {
 					
 					@Override
 					public void channelActive(ChannelHandlerContext ctx) throws Exception {
-						protocolCodec.channelActive(ctx.channel());
+						protocolCodec.channelActive(ctx.channel(),parameter);
 						ctx.fireChannelActive();
 					}
 					
@@ -61,13 +59,69 @@ public class NetworkCommon {
 				};
 				byteToMessageDecoder.setCumulator(ByteToMessageDecoder.COMPOSITE_CUMULATOR);
 				ch.pipeline().addLast(byteToMessageDecoder);
-				
-				//ch.pipeline().addLast(new MessageToByteEncoder<MessageOut>() {});
-				
+								
 				ch.pipeline().addLast(new ChannelOutboundHandlerAdapter() {
 					@Override
 					public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-						writePackMessage(ctx, msg, promise);
+						ByteBuf byteBuf = protocolCodec.protocolToByteBuf(msg);
+						if(byteBuf != null) {
+							ctx.writeAndFlush(byteBuf, promise);
+						}
+					}
+					
+				});
+				
+			}
+		};
+	}
+	final static public ChannelInitializer<?> newChannelInitializer(final Class<? extends SocketConnection> protocolCodecClass,Object []parameter) {
+		return new ChannelInitializer<SocketChannel>() {
+			@Override
+			public void initChannel(SocketChannel ch) throws Exception {
+				SocketConnection protocolCodec = protocolCodecClass.newInstance();
+				ByteToMessageDecoder byteToMessageDecoder = new ByteToMessageDecoder() {
+								
+					@Override
+				    public void  exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
+				    	if(cause.getMessage().equals("Connection reset by peer")||cause.getMessage().equals("远程主机强迫关闭了一个现有的连接。")||cause.getMessage().equals("你的主机中的软件中止了一个已建立的连接。")) {
+				    		//logger.error("playerId: " + playerId + " netty exceptionCaught : "+ cause.getMessage());	
+				    	}else {
+					        logger.error("exceptionCaught " +  DebugUtil.printStack(cause)); 
+				        	ctx.close();
+				    	}
+				    }
+					
+					@Override
+					public void channelActive(ChannelHandlerContext ctx) throws Exception {
+						protocolCodec.channelActive(ctx.channel(),parameter);
+						ctx.fireChannelActive();
+					}
+					
+					@Override
+					public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+						protocolCodec.channelInactive();
+						ctx.fireChannelInactive();
+					}
+					
+					@Override
+					protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+						 try {
+							protocolCodec.receiveData(in);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				byteToMessageDecoder.setCumulator(ByteToMessageDecoder.COMPOSITE_CUMULATOR);
+				ch.pipeline().addLast(byteToMessageDecoder);
+								
+				ch.pipeline().addLast(new ChannelOutboundHandlerAdapter() {
+					@Override
+					public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+						ByteBuf byteBuf = protocolCodec.protocolToByteBuf(msg);
+						if(byteBuf != null) {
+							ctx.writeAndFlush(byteBuf, promise);
+						}
 					}
 					
 				});

@@ -1,13 +1,13 @@
-package io.chestnut.core.service.serviceMrg.httpHandle;
+package io.chestnut.core.gateway.httpHandle;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 import com.google.gson.Gson;
 
+import io.chestnut.core.gateway.Service;
+import io.chestnut.core.gateway.ServiceMrg;
 import io.chestnut.core.network.httpd.HttpHandle;
-import io.chestnut.core.service.serviceMrg.ServiceMrg;
-import io.chestnut.core.service.serviceMrg.entity.Service;
 import io.netty.channel.ChannelHandlerContext;
 
 public class ServiceInfo extends HttpHandle{
@@ -19,7 +19,7 @@ public class ServiceInfo extends HttpHandle{
 
 	@Override
 	public void doPost(ChannelHandlerContext ctx, Map<String, String> parac) throws Exception {
-		ArrayList<Service> serviceList = ServiceMrg.entityMrg.getEntity(Service.class);
+		Collection<Service> serviceList = ServiceMrg.getAllService();
 		 response(ctx, new Gson().toJson(serviceList));
 	}
 	

@@ -1,4 +1,4 @@
-package io.chestnut.core.systemMessage;
+package io.chestnut.core.message.systemMsg;
 
 import io.chestnut.core.InternalMessage;
 

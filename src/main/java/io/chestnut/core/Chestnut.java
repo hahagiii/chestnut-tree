@@ -28,17 +28,25 @@ public abstract class Chestnut {
 	public abstract String getId();
 	protected ChestnutEventLoopThread chestnutEventLoopThread;
 	
-	public MHandle[] callHandle = new MHandle[Short.MAX_VALUE];
-	
+	private MHandle[] callHandle = new MHandle[Short.MAX_VALUE];
+	private ChestnutTree chestnutTree;
 	@SuppressWarnings("unchecked")
-	public ArrayList<MHandle>[] castHandleList = new ArrayList[Short.MAX_VALUE];
-	public Map<String, ChestnutComponent<?>> chestnutComponentMap = new HashMap<>();
+	private ArrayList<MHandle>[] castHandleList = new ArrayList[Short.MAX_VALUE];
+	private Map<String, ChestnutComponent<?>> chestnutComponentMap = new HashMap<>();
 
 	
 	public void start() {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <T extends ChestnutComponent<?>> T getComponent(String componentId) {
+		ChestnutComponent<?> chestnutComponent = chestnutComponentMap.get(componentId);
+		if(chestnutComponent == null) {
+			return null;
+		}
+		return (T) chestnutComponent;
+	}
 	public void addComponent(ChestnutComponent<?> chestnutComponent) {
 		if(chestnutComponent.componentId == null) {
 			chestnutComponent.componentId = chestnutComponent.getClass().getSimpleName();
@@ -124,7 +132,7 @@ public abstract class Chestnut {
 	}
 
 	public void cast(short messageId) throws Exception {
-		cast(InternalMsgFactory.getMessage(messageId));
+		cast(chestnutTree.getMessage(messageId));
 	}
 	public void cast(Message request) throws Exception {
 			if(request == null) {
@@ -158,5 +166,13 @@ public abstract class Chestnut {
 			}
 		}
 		
+	}
+
+	public ChestnutTree chestnutTree() {
+		return chestnutTree;
+	}
+
+	public void setChestnutTree(ChestnutTree chestnutTree) {
+		this.chestnutTree = chestnutTree;
 	}
 }

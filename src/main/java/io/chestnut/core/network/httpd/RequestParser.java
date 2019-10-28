@@ -96,9 +96,9 @@ public class RequestParser {
     
     /**
      *
-     * @param host
-     * @return
-     * @throws IOException
+     * @param host host
+     * @return string
+     * @throws IOException IOException
      */
     public static String parseIp(String host) throws IOException {
         InetAddress inetAddress = InetAddress.getByName(host);
