@@ -8,8 +8,34 @@
   <packaging>jar</packaging>
 
   <name>chestnut-core</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/march-sprite/chestnut-tree</url>
+  <description>a common game server framework base java and netty</description>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://www.mit-license.org</url>
+			<distribution>repo</distribution>
+			<comments></comments>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/march-sprite/chestnut-tree</url>
+		<developerConnection>https://github.com/march-sprite/chestnut-tree.git</developerConnection>
+		<connection>https://github.com/march-sprite/chestnut-tree.git</connection>
+	</scm>
 
+	<developers>
+		<developer>
+			<name>march-sprite</name>
+			<id>march-sprite</id>
+			<email>wisherplace@gmail.com</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+8</timezone>
+		</developer>
+	</developers>
+	
   <properties>
 	 <sdkVersion>8</sdkVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -130,7 +156,66 @@
 			</executions>
 		</plugin>
 
+		<plugin>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-javadoc-plugin</artifactId>
+		  <version>3.1.1</version>
+		  <executions>
+			<execution>
+			  <id>attach-javadocs</id>
+			  <goals>
+				<goal>jar</goal>
+			  </goals>
+			  <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+              </configuration>
+			</execution>
+		  </executions>
+		</plugin>
+		
+		 <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+			
+			<plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>sonatype-nexus-snapshots</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
 
 		</plugins>
+		
+		
+
 	</build>
+	<distributionManagement>
+    <repository>
+        <id>sonatype-nexus-staging</id>
+        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+	 <id>sonatype-nexus-snapshots</id>
+     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+</distributionManagement>
+
+
 </project>
