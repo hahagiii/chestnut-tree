@@ -5,8 +5,14 @@ public class CallFail  extends Exception{
 	private short messageId;
 	private static final long serialVersionUID = 1L;
 	
-	public CallFail(String arg0) {
-		super(arg0);
+	public CallFail(int errorCode, short messageId, String describe) {
+		super(describe);
+		this.errorCode = errorCode;
+		this.messageId = messageId;
+	}
+
+	public CallFail(String describe) {
+		super(describe);
 	}
 	
 	public int getErrorCode() {
@@ -17,9 +23,6 @@ public class CallFail  extends Exception{
 	}
 	public short getMessageId() {
 		return messageId;
-	}
-	public void setMessageId(short messageId) {
-		this.messageId = messageId;
 	}
 
 }

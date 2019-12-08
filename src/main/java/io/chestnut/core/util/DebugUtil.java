@@ -13,14 +13,9 @@ public class DebugUtil {
 		return sb;
 	}
 
-	public static String printStack(Exception e) {
-		StringWriter message = new StringWriter();
-		PrintWriter writer = new PrintWriter(message);
-		e.printStackTrace(writer);
-		return message.toString();
-	}
+
 	
-	public static String printStackFirstLine(Exception e) {
+	public static String printStackFirstLine(Throwable e) {
 		StringWriter message = new StringWriter();
 		PrintWriter writer = new PrintWriter(message);
 		e.printStackTrace(writer);
@@ -38,4 +33,12 @@ public class DebugUtil {
 		}
 		return sb;
 	}
+
+	public static String stackPath(Throwable e) {
+		StringWriter message = new StringWriter();
+		PrintWriter writer = new PrintWriter(message);
+		e.printStackTrace(writer);
+		return message.toString();
+	}
+
 }

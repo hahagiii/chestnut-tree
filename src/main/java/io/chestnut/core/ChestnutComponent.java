@@ -2,7 +2,7 @@ package io.chestnut.core;
 
 
 
-public class ChestnutComponent<T extends Chestnut> implements Comparable<ChestnutComponent<?>> {
+public abstract class ChestnutComponent<T extends Chestnut> implements Comparable<ChestnutComponent<?>> {
 	protected String componentId;
 	protected int respondOrder;
 	protected T componentOwner;
@@ -12,8 +12,7 @@ public class ChestnutComponent<T extends Chestnut> implements Comparable<Chestnu
 		return otherComponent.respondOrder > this.respondOrder?1:0;
 	}
 	
-	
-	public final T getOwner() {
+	public final T owner() {
 		return componentOwner;
 	}
 
@@ -22,5 +21,5 @@ public class ChestnutComponent<T extends Chestnut> implements Comparable<Chestnu
 		this.componentOwner = (T) componentOwner;
 	}
 
-	
+	public abstract void castException(Throwable e,Message request);
 }

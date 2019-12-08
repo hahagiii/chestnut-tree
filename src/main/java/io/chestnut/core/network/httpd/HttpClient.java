@@ -62,13 +62,13 @@ public class HttpClient {
                     }
                     jsonResult = str; //JSONObject.parseObject(str);
                 } catch (Exception e) {
-                    logger.error("post璇锋眰鎻愪氦澶辫触:" + url, e);
-                    return DebugUtil.printStack(e);
+                    logger.error("post error:" + url, e);
+                    return DebugUtil.stackPath(e);
                 }
             }
         } catch (IOException e) {
-            logger.error("post璇锋眰鎻愪氦澶辫触:" + url, e);
-            return DebugUtil.printStack(e);
+            logger.error("post error:" + url, e);
+            return DebugUtil.stackPath(e);
         }
         return jsonResult;
     }

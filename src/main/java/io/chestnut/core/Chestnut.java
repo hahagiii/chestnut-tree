@@ -4,13 +4,13 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.chestnut.core.exception.CallFail;
-import io.chestnut.core.exception.HandleInternalError;
 import io.chestnut.core.exception.MessageNotHandle;
 
 class MHandle{
@@ -103,34 +103,22 @@ public abstract class Chestnut {
 		MHandle mHandle = callHandle[request.id()];
 		if(mHandle == null) {
 			CallFail callFail = new CallFail("mHandle is null " + request.id());
-			callFail.printStackTrace();
 			throw callFail;
 		}
 		final MethodHandle methodHandle = mHandle.callMh;
 		try {
 			return (T) methodHandle.invoke(mHandle.handleCallComponent, request);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new CallFail("invoke error");
-		}
+		}catch (Throwable e) {
+			CallFail callFail = null;
+			if(e instanceof CallFail){
+				callFail = (CallFail) e;
+			}else{
+				callFail = new CallFail("invoke error " + e.getMessage() + " request is" + request.id());
+			}
+			throw callFail;
+		}	
 	}
 	
-	public void execute(Message request) throws CallFail {
-		MHandle mHandle = callHandle[request.id()];
-		if(mHandle == null) {
-			CallFail callFail = new CallFail("mHandle is null " + request.id());
-			callFail.printStackTrace();
-			throw callFail;
-		}
-		final MethodHandle methodHandle = mHandle.callMh;
-		try {
-			methodHandle.invoke(mHandle.handleCallComponent, request);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new CallFail("invoke error");
-		}
-	}
-
 	public void cast(short messageId) throws Exception {
 		cast(chestnutTree.getMessage(messageId));
 	}
@@ -151,7 +139,7 @@ public abstract class Chestnut {
 		return true;
 
 	}
-	public void handleCast(Message request) throws MessageNotHandle,HandleInternalError {
+	public void handleCast(Message request) throws Throwable {
 		ArrayList<MHandle> mHandleList = castHandleList[request.id()];
 		if(mHandleList == null || mHandleList.isEmpty()) {
 			throw new MessageNotHandle("requestId: " + request.id());
@@ -160,9 +148,12 @@ public abstract class Chestnut {
 			try {
 				final MethodHandle methodHandle = mHandle.callMh;
 				methodHandle.invoke(mHandle.handleCallComponent, request);
+			} catch (WrongMethodTypeException e){
+				throw e;
+			}catch (ClassCastException e){
+				throw e;
 			} catch (Throwable e) {
-				e.printStackTrace();
-				throw new HandleInternalError();
+				mHandle.handleCallComponent.castException(e,request);
 			}
 		}
 		

@@ -37,15 +37,15 @@ public class ChestnutEventLoopThread extends Thread {
 						}
 						try {
 							chestnut.handleCast(wrapMessage.message);
-						} catch (Exception e) {
-							logger.error(DebugUtil.printStack(e));
+						} catch (Throwable e) {
+							logger.error(DebugUtil.stackPath(e));
 						}
 					}
 				}else {
 					try {
 						((Message)(message)).messageDest().handleCast(message);
-					} catch (Exception e) {
-						logger.error(DebugUtil.printStack(e));
+					} catch (Throwable e) {
+						logger.error(DebugUtil.stackPath(e));
 					}
 				}
 				
